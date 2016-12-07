@@ -3,8 +3,6 @@
 import numpy as np
 import math
 
-sigmoid = np.frompyfunc(lambda z:1.0 / (1+ math.exp(-z)),1,1)
-sigmoidGradient = np.frompyfunc(lambda z : sigmoid(z) * (1-sigmoid(z)),1,1)
 def multip_func(a, b):
     if a == 0:
         return 0
@@ -25,13 +23,17 @@ def Predict(X, ts):
     tmp = X
     for t in ts:
         z = np.c_[np.ones([tmp.shape[0], 1]), tmp] * t.T
-        tmp = sigmoid(z) # a
+        tmp = 1.0 / (1 + np.exp(-z)) # a
     return tmp.astype(np.float)
 
 
-def Cost(hx, y):
+def Cost(hx, y, ts = [], lam = 0.0):
     m,_ = y.shape
     a = multip(-y, logp(hx))
     b = multip(1.0 - y, logp(1.0 - hx))
     J = np.sum(a - b) / m
+    su = 0.0
+    for t in ts:
+        su += np.sum(np.multiply(t, t))
+    J += lam / (2 * m) * su 
     return J
