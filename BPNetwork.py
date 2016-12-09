@@ -8,7 +8,7 @@ import copy
 class BPNetwork:
     def __init__(self):
         self.theta = None
-    def train(self, X, y, layers, alpha = 0.1, iter_time = 100, lam = 0):
+    def train(self, X, y, layers, alpha = 0.1, iter_time = 100, lam = 0, NewTheta = True):
         # 单输出模型
         '''
             for example, 
@@ -20,7 +20,10 @@ class BPNetwork:
         '''
         # Theta 个数
         tlen = len(layers) - 1
-        ts = [GetRandWeights(layers[i], layers[i+1]) for i in range(tlen)] 
+        if NewTheta:
+            ts = [GetRandWeights(layers[i], layers[i+1]) for i in range(tlen)] 
+        else:
+            ts = copy.copy(self.theta)
         D = [np.matrix(np.zeros(ts[i].shape)) for i in range(tlen)]
         m, n = X.shape
         xt = np.matrix(X.T).astype(np.float)

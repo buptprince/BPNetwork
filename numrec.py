@@ -38,7 +38,8 @@ for j in range(m):
         y[j] = 0
     ty[j, k] = 1
 
-net.train(X, ty, [GRID * GRID, 100, 10], alpha = 0.001, iter_time = 3000, lam = 0.1)
+net.load("mynetgood.bin")
+net.train(X, ty, [GRID * GRID, 100, 10], alpha = 0.05, iter_time = 100, lam = 0.1, NewTheta = False)
 p = net.predict(X)
 py = np.argmax(p, axis = 1)
 right = np.sum(py == y)
