@@ -23,7 +23,7 @@ for j in range(m):
         y[j] = 0
     ty[j, k] = 1
 
-net.train(X, ty, [64, 25, 10], alpha = 0.001, iter_time = 10000, lam = 0.1)
+net.train(X, ty, [64, 100, 10], alpha = 0.001, iter_time = 10000, lam = 0.1)
 p = net.predict(X)
 py = np.argmax(p, axis = 1)
 right = np.sum(py == y)

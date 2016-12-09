@@ -5,13 +5,13 @@ import sys
 import numpy as np
 from BPNetwork import *
  
-LEARNING_MODE = False
+LEARNING_MODE = True
 LEARNING_SINGLE = 10
 
 class Drawer(QWidget):
-    GRID_SIZE = 20
-    GRID_W = 8
-    GRID_H = 8
+    GRID_SIZE = 8
+    GRID_W = 80
+    GRID_H = 80
     def __init__(self):
         QWidget.__init__(self)
         self.initUI()
@@ -38,7 +38,9 @@ class Drawer(QWidget):
         self.learningM = 0 # 正在学习的数字
         self.X = None
         self.y = None
+        self.lastP = None
         self.show()
+        
     def ClearMat(self):
 
         if LEARNING_MODE:
@@ -75,10 +77,18 @@ class Drawer(QWidget):
         p = event.pos()
         self.mouseButton = event.button()
         self.drawp(p.x(), p.y())
+        self.lastp = p
     def mouseMoveEvent(self, event): 
         p = event.pos()
+        self.dline(p)
         self.drawp(p.x(), p.y())
+    def dline(self, p):
+        #self.lastp -> p
+        d = self.lastp - p
+        print d
+        self.lastp = p
     def mouseReleaseEvent(self, event):
+        self.lastp = None
         #Predict
         x = self.mat.reshape(1, self.GRID_W * self.GRID_H)
         p = self.net.predict(x)
