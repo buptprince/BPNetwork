@@ -4,12 +4,27 @@ from BPNetwork import *
 import numpy as np
 import scipy.io as sio
 
-#data = sio.loadmat('ex4data1.mat')
-#X = data['X']
-#y = data['y']
-X = np.fromfile("train.bin").reshape(100, 64)
-y = np.matrix([i / 10 for i in range(100)]).reshape(100,1)
-m, n = X.shape
+GRID = 10
+fin = open("tdata.txt", "r")
+Xs = []
+ys = []
+while 1:
+    line = fin.readline()
+    if len(line) == 0:
+        break
+    flag = int(line)
+    ys.append(flag)
+    x = []
+    for r in range(GRID):
+        line = fin.readline().strip()
+        for i in line.split(' '):
+            x.append(int(i.strip()))
+    Xs.append(x)
+
+n = GRID * GRID
+m = len(ys)
+X = np.matrix(Xs)
+y = np.matrix(ys).reshape(m, 1)
 
 #notice: in y, 0 -> 10
 
@@ -23,7 +38,7 @@ for j in range(m):
         y[j] = 0
     ty[j, k] = 1
 
-net.train(X, ty, [64, 100, 10], alpha = 0.001, iter_time = 10000, lam = 0.1)
+net.train(X, ty, [GRID * GRID, 100, 10], alpha = 0.001, iter_time = 3000, lam = 0.1)
 p = net.predict(X)
 py = np.argmax(p, axis = 1)
 right = np.sum(py == y)

@@ -71,12 +71,16 @@ class Brush():
                 # draw eveypoint between them
                 self.npoints.append(p)
                 if self.style == False:
-                    pygame.draw.circle(self.screen,
-                            self.color, p, self.size)
+                    pygame.draw.circle(self.screen,self.color, p, self.size)
                 else:
                     self.screen.blit(self.brush_now, p)
 
             self.last_pos = pos
+    def update(self):
+        self.screen.fill((255, 255, 255))
+        for p in self.npoints:
+            pygame.draw.circle(self.screen,self.color, p, self.size)
+
 
     def _get_points(self, pos):
         """ Get all points between last_point ~ now_point. """
@@ -135,7 +139,7 @@ class Painter():
         self.clock = pygame.time.Clock()
         self.brush = Brush(self.screen)
         self.net = BPNetwork()
-        #self.net.load("net.bin")
+        self.net.load("mynetgood.bin")
  
     def run(self):
         self.screen.fill((255, 255, 255))
@@ -172,8 +176,8 @@ class Painter():
                             fout.write(buf)
                             print buf
                             fout.close()
-                            self.screen.fill((255, 255, 255))
-                            self.brush.npoints = []
+                        self.screen.fill((255, 255, 255))
+                        self.brush.npoints = []
                 elif event.type == MOUSEMOTION:
                     self.brush.draw(event.pos)
                 elif event.type == MOUSEBUTTONUP:
@@ -188,8 +192,11 @@ class Painter():
                     try:
                         x = z.reshape(1, self.GRID * self.GRID)
                         p = self.net.predict(x)
+                        print p
                         y = np.argmax(p, axis = 1)
-                        show_text(self.screen, (0, 0), "%d" % y, (255,0,0), True, 40)
+                        ma = np.max(p)
+                        self.brush.update()
+                        show_text(self.screen, (0, 0), "%d[%.2lf%%]" % (y, ma * 100), (255,0,0), True, 40)
                     except:
                         pass
                     self.brush.end_draw()
